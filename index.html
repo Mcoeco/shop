@@ -3,579 +3,688 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Custom Form UI — MCPE Add-on Shop</title>
-  <meta name="description" content="ซื้อ Custom Form UI สำหรับ MCPE Server เปลี่ยนฟอร์มธรรมดาให้ดูสวย ทันสมัย"/>
-  <meta name="theme-color" content="#f2faf5"/>
+  <title>Custom Form UI — MCPE Add-on</title>
+  <meta name="description" content="ซื้อ Custom Form UI สำหรับ MCPE Server"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;600;700&family=Nunito:wght@400;600;700;800;900&family=Press+Start+2P&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Sarabun:wght@300;400;500;700&display=swap" rel="stylesheet"/>
   <style>
-    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-    html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
-    body{font-family:'Nunito','Noto Sans Thai',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
-    img{display:block;max-width:100%;height:auto}
-    a{text-decoration:none;color:inherit}
-    button{border:none;background:none;cursor:pointer;font:inherit;color:inherit}
-    ul,ol{list-style:none}
-
-    :root{
-      --bg:#f2faf5;--bg2:#ffffff;--panel:#ffffff;
-      --g900:#0d2b18;--g800:#1a4a2e;--g700:#246b3e;--g600:#2d8a50;
-      --g500:#3aad65;--g400:#5cc480;--g300:#8ed9a8;--g200:#b8ecca;
-      --g100:#d8f5e4;--g50:#edfaf3;
-      --text:#0d2b18;--text2:#2a5c3e;--text3:#5a9070;
-      --border:#c5e8d2;--shadow:rgba(30,100,60,.1);--white:#ffffff;
-      --pink:#f9a8d4;--pink-light:#fdf2f8;
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box }
+    html { scroll-behavior:smooth }
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background: #0f0f0f;
+      color: #e8e2d6;
+      line-height: 1.6;
+      overflow-x: hidden;
     }
-    ::selection{background:var(--g400);color:#fff}
-    ::-webkit-scrollbar{width:5px}
-    ::-webkit-scrollbar-track{background:transparent}
-    ::-webkit-scrollbar-thumb{background:var(--g400);border-radius:99px}
-    ::-webkit-scrollbar-thumb:hover{background:var(--g600)}
+    img { display:block; max-width:100% }
+    a { text-decoration:none; color:inherit }
+    button { border:none; background:none; cursor:pointer; font:inherit; color:inherit }
 
-    /* grid bg */
-    body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.015;
-      background-image:linear-gradient(var(--g700) 1px,transparent 1px),linear-gradient(90deg,var(--g700) 1px,transparent 1px);
-      background-size:42px 42px}
+    :root {
+      --accent:   #d4a843;
+      --accent-dim: #3d3220;
+      --muted:    #6b6358;
+      --border:   #2a2620;
+      --border2:  #1e1c18;
+      --panel:    #141414;
+      --paper:    #e8e2d6;
+    }
 
-    /* petals */
-    .petal-wrap{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}
-    .pk{position:absolute;opacity:0;animation:pkfall linear infinite}
-    @keyframes pkfall{0%{transform:translateY(-30px) rotate(0);opacity:.3}85%{opacity:.18}100%{transform:translateY(108vh) rotate(420deg);opacity:0}}
+    ::selection { background:var(--accent); color:#000 }
+    ::-webkit-scrollbar { width:4px }
+    ::-webkit-scrollbar-track { background:transparent }
+    ::-webkit-scrollbar-thumb { background:#2a2620; border-radius:2px }
 
-    /* REVEAL */
-    .rv{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}
-    .rv.show{opacity:1;transform:translateY(0)}
-    .d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}
+    /* scanline */
+    body::after {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:9999;
+      background: repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.022) 2px,rgba(0,0,0,.022) 4px);
+    }
 
-    /* NAV */
-    .nav{position:fixed;top:0;left:0;right:0;z-index:1000;transition:background .4s,box-shadow .4s}
-    .nav.scrolled{background:rgba(242,250,245,.94);backdrop-filter:blur(20px);box-shadow:0 1px 0 var(--border),0 4px 20px rgba(30,100,60,.06)}
-    .nav-inner{max-width:1140px;margin:0 auto;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:64px}
-    .logo{font-family:'Press Start 2P',monospace;font-size:.6rem;color:var(--g800);display:flex;align-items:center;gap:.4rem}
-    .logo b{color:var(--g500)}
-    .logo-leaf{display:inline-block;font-size:.7rem;animation:leafsway 3s ease-in-out infinite}
-    @keyframes leafsway{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(8deg)}}
-    .nav-links{display:flex;gap:2rem}
-    .nav-links a{font-size:.75rem;font-weight:700;color:var(--text3);letter-spacing:.05em;text-transform:uppercase;position:relative;transition:color .2s}
-    .nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--g500);transition:width .3s;border-radius:2px}
-    .nav-links a:hover{color:var(--g700)}.nav-links a:hover::after{width:100%}
-    .burger{display:none;flex-direction:column;gap:5px;padding:8px}
-    .burger span{display:block;width:18px;height:2px;background:var(--text);border-radius:2px;transition:transform .3s,opacity .3s}
-    .burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
-    .burger.open span:nth-child(2){opacity:0}
-    .burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
-    .m-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(242,250,245,.97);backdrop-filter:blur(20px);padding:1rem 2rem 1.5rem;border-bottom:2px solid var(--g300)}
-    .m-menu.open{display:block}
-    .m-menu a{display:block;padding:.6rem 0;font-size:.85rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.04em}
-    .m-menu a:hover{color:var(--g600)}
-    @media(max-width:768px){.nav-links{display:none}.burger{display:flex}}
+    /* ── NAV ── */
+    .nav {
+      position:fixed; top:0; left:0; right:0; z-index:100;
+      border-bottom:1px solid var(--border);
+      background:rgba(15,15,15,.93);
+      backdrop-filter:blur(14px);
+    }
+    .nav-inner {
+      max-width:1080px; margin:0 auto; padding:0 1.5rem;
+      display:flex; align-items:center; justify-content:space-between; height:52px;
+    }
+    .logo { font-family:'IBM Plex Mono',monospace; font-size:.72rem; font-weight:700; color:var(--paper); letter-spacing:.04em }
+    .logo span { color:var(--accent) }
+    .nav-links { display:flex; gap:1.75rem }
+    .nav-links a { font-size:.78rem; color:var(--muted); letter-spacing:.03em; transition:color .2s }
+    .nav-links a:hover { color:var(--paper) }
 
-    /* HERO STRIP */
-    .hero-strip{padding:7rem 2rem 2.5rem;background:linear-gradient(160deg,var(--g50) 0%,var(--white) 50%,#f0f8f4 100%);position:relative;overflow:hidden;text-align:center}
-    .hero-strip::after{content:'';position:absolute;bottom:0;left:0;right:0;height:12px;z-index:5;
-      background:repeating-linear-gradient(90deg,#3aad65 0,#3aad65 32px,#2d8a50 32px,#2d8a50 64px)}
-    .hero-strip::before{content:'';position:absolute;top:20%;right:5%;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(90,196,128,.1),transparent 70%);pointer-events:none}
-    .hero-badge{display:inline-flex;align-items:center;gap:.45rem;font-size:.62rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
-      color:var(--white);background:linear-gradient(135deg,var(--g600),var(--g800));padding:.35rem 1rem .35rem .65rem;border-radius:4px;
-      margin-bottom:1.1rem;box-shadow:3px 3px 0 var(--g800)}
-    .hero-badge-dot{width:7px;height:7px;border-radius:50%;background:#fff;animation:blink 2s ease-in-out infinite}
-    @keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
-    .hero-strip h1{font-family:'Nunito',sans-serif;font-size:clamp(1.8rem,4vw,3rem);font-weight:900;line-height:1.15;letter-spacing:-.02em;color:var(--g900);max-width:700px;margin:0 auto}
-    .hero-strip h1 em{font-style:normal;background:linear-gradient(135deg,var(--g600),var(--g400));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .hero-sub{margin-top:.9rem;font-size:.95rem;color:var(--text2);max-width:480px;margin-left:auto;margin-right:auto;line-height:1.85}
+    .burger { display:none; flex-direction:column; gap:5px; padding:8px }
+    .burger span { display:block; width:18px; height:1.5px; background:var(--paper); transition:.3s }
+    .burger.open span:nth-child(1) { transform:translateY(6.5px) rotate(45deg) }
+    .burger.open span:nth-child(2) { opacity:0 }
+    .burger.open span:nth-child(3) { transform:translateY(-6.5px) rotate(-45deg) }
+    .m-menu { display:none; background:#111; border-bottom:1px solid var(--border); padding:.75rem 1.5rem 1.2rem }
+    .m-menu.open { display:block }
+    .m-menu a { display:block; padding:.55rem 0; font-size:.92rem; color:var(--muted); border-bottom:1px solid var(--border2) }
+    .m-menu a:last-child { border-bottom:none }
+    .m-menu a:hover { color:var(--paper) }
+    @media(max-width:640px){ .nav-links{display:none} .burger{display:flex} }
 
-    /* TICKER */
-    .ticker{overflow:hidden;border-top:3px solid var(--g300);border-bottom:3px solid var(--g300);background:var(--g800)}
-    .ticker-track{display:flex;width:max-content;animation:marquee 28s linear infinite}
-    .ticker-item{font-family:'Press Start 2P',monospace;font-size:.45rem;color:var(--g200);white-space:nowrap;padding:.7rem 1.4rem;display:flex;align-items:center;gap:.9rem}
-    .ticker-item::after{content:'';width:5px;height:5px;background:var(--g400);border-radius:50%;flex-shrink:0}
-    @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+    /* ── HERO ── */
+    .hero-wrap { max-width:1080px; margin:0 auto; padding:0 1.5rem }
+    .hero {
+      min-height:100vh;
+      display:flex; flex-direction:column; justify-content:flex-end;
+      padding:7rem 0 5rem; position:relative;
+    }
+    @media(max-width:640px){ .hero { min-height:auto; padding:5.5rem 0 4rem } }
 
-    /* SECTION */
-    .sec{padding:5rem 2rem;position:relative;z-index:2}
-    .sec-w{background:var(--white)}
-    .sec-inner{max-width:1140px;margin:0 auto}
-    .sec-label{display:inline-flex;align-items:center;gap:.4rem;font-family:'Press Start 2P',monospace;font-size:.42rem;letter-spacing:.08em;text-transform:uppercase;color:var(--g600);margin-bottom:.7rem}
-    .sec-label::before{content:'';display:inline-block;width:6px;height:6px;background:var(--g500);border-radius:2px}
-    .sec-title{font-family:'Nunito',sans-serif;font-size:clamp(1.5rem,3vw,2.2rem);font-weight:900;color:var(--g900);letter-spacing:-.02em;line-height:1.2}
-    .sec-title span{color:var(--g600)}
-    .sec-sub{margin-top:.5rem;font-size:.9rem;color:var(--text3);max-width:480px;line-height:1.75}
-    .sec-head{margin-bottom:3rem}
+    .hero-eye {
+      font-family:'IBM Plex Mono',monospace; font-size:.58rem;
+      color:var(--muted); letter-spacing:.15em; text-transform:uppercase;
+      margin-bottom:1.4rem; display:flex; align-items:center; gap:.75rem;
+    }
+    .hero-eye::before { content:''; display:block; width:20px; height:1px; background:var(--accent) }
+    .hero h1 {
+      font-family:'IBM Plex Mono',monospace;
+      font-size:clamp(2.2rem,8vw,5rem);
+      font-weight:700; line-height:1.02; color:var(--paper); letter-spacing:-.02em;
+    }
+    .hero h1 .hi { color:var(--accent) }
+    .hero-desc {
+      margin-top:1.4rem; font-size:1rem; color:var(--muted);
+      max-width:440px; line-height:1.85; font-weight:300;
+    }
+    .hero-cta { margin-top:2.5rem; display:flex; align-items:center; gap:1.25rem; flex-wrap:wrap }
+    .btn-primary {
+      display:inline-flex; align-items:center; gap:.55rem;
+      background:var(--accent); color:#000;
+      font-family:'IBM Plex Mono',monospace; font-size:.72rem; font-weight:700;
+      letter-spacing:.05em; padding:.75rem 1.6rem; border:none; cursor:pointer;
+      transition:background .2s,transform .15s;
+    }
+    .btn-primary:hover { background:#e8bc5a; transform:translateY(-1px) }
+    .btn-ghost {
+      display:inline-flex; align-items:center; gap:.4rem;
+      font-family:'IBM Plex Mono',monospace; font-size:.68rem;
+      color:var(--muted); letter-spacing:.04em;
+      border-bottom:1px solid var(--border); padding-bottom:.1rem;
+      transition:color .2s,border-color .2s;
+    }
+    .btn-ghost:hover { color:var(--paper); border-color:var(--muted) }
+    .hero-aside {
+      position:absolute; right:0; bottom:5rem;
+      font-family:'IBM Plex Mono',monospace; font-size:.5rem;
+      color:var(--border); writing-mode:vertical-rl; letter-spacing:.2em;
+    }
+    @media(max-width:640px){ .hero-aside{display:none} }
 
-    /* PREVIEW LAYOUT */
-    .preview-layout{display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;align-items:start}
-    @media(max-width:768px){.preview-layout{grid-template-columns:1fr}}
+    /* ── DIVIDER ── */
+    .div-wrap { max-width:1080px; margin:0 auto; padding:0 1.5rem }
+    .div { height:1px; background:linear-gradient(90deg,transparent,var(--border) 20%,var(--border) 80%,transparent) }
 
-    /* SELECTOR PANEL */
-    .selector-panel{display:flex;flex-direction:column;gap:1.8rem}
-    .sel-group-label{font-family:'Press Start 2P',monospace;font-size:.4rem;letter-spacing:.1em;text-transform:uppercase;color:var(--g600);margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem}
-    .sel-group-label::before{content:'';display:inline-block;width:5px;height:5px;background:var(--g500);border-radius:2px}
-    .sel-group-title{font-size:.95rem;font-weight:800;color:var(--text);display:flex;align-items:center;gap:.5rem;margin-bottom:1rem}
+    /* ── SECTION ── */
+    .sec { padding:4.5rem 1.5rem; max-width:1080px; margin:0 auto }
+    @media(max-width:640px){ .sec { padding:3rem 1.25rem } }
 
-    /* THEME CARDS */
-    .theme-cards{display:flex;gap:.75rem;flex-wrap:wrap}
-    .theme-card{flex:1;min-width:90px;border:2px solid var(--border);border-radius:12px;padding:.9rem .75rem;cursor:pointer;
-      background:var(--white);transition:all .3s cubic-bezier(.16,1,.3,1);text-align:center;box-shadow:3px 3px 0 var(--border);position:relative;overflow:hidden}
-    .theme-card:hover{border-color:var(--g400);transform:translateY(-3px);box-shadow:4px 6px 0 var(--g300)}
-    .theme-card.active{border-color:var(--g600);background:var(--g50);box-shadow:3px 3px 0 var(--g500)}
-    .theme-card.active::after{content:'✓';position:absolute;top:6px;right:8px;font-size:.8rem;font-weight:900;color:var(--g600)}
-    .theme-card-icon{font-size:1.6rem;margin-bottom:.4rem;display:block}
-    .theme-card-name{font-size:.8rem;font-weight:800;color:var(--text);display:block}
-    .theme-card-id{font-family:'Press Start 2P',monospace;font-size:.35rem;color:var(--text3);margin-top:.2rem;display:block}
+    .sec-tag {
+      font-family:'IBM Plex Mono',monospace; font-size:.58rem;
+      color:var(--muted); letter-spacing:.12em; text-transform:uppercase;
+      display:flex; align-items:center; gap:.5rem; margin-bottom:1rem;
+    }
+    .sec-tag::after { content:''; display:block; flex:1; height:1px; background:var(--border) }
+    .sec-title {
+      font-family:'IBM Plex Mono',monospace;
+      font-size:clamp(1.2rem,3vw,1.8rem); font-weight:700;
+      color:var(--paper); letter-spacing:-.01em; margin-bottom:.4rem;
+    }
+    .sec-sub { font-size:.88rem; color:var(--muted); line-height:1.8 }
 
-    /* BUTTON STYLE CARDS */
-    .btn-style-cards{display:flex;gap:.75rem;flex-wrap:wrap}
-    .bs-card{flex:1;min-width:110px;border:2px solid var(--border);border-radius:12px;padding:.9rem .75rem;cursor:pointer;
-      background:var(--white);transition:all .3s cubic-bezier(.16,1,.3,1);text-align:center;box-shadow:3px 3px 0 var(--border);position:relative;overflow:hidden}
-    .bs-card:hover{border-color:var(--g400);transform:translateY(-3px);box-shadow:4px 6px 0 var(--g300)}
-    .bs-card.active{border-color:var(--g600);background:var(--g50);box-shadow:3px 3px 0 var(--g500)}
-    .bs-card.active::after{content:'✓';position:absolute;top:6px;right:8px;font-size:.8rem;font-weight:900;color:var(--g600)}
-    .bs-card-icon{font-size:1.4rem;margin-bottom:.4rem;display:block}
-    .bs-card-name{font-size:.8rem;font-weight:800;color:var(--text);display:block}
-    .bs-card-id{font-family:'Press Start 2P',monospace;font-size:.35rem;color:var(--text3);margin-top:.2rem;display:block}
+    /* ── PREVIEW LAYOUT ── */
+    .preview-layout {
+      display:grid;
+      grid-template-columns:1fr 1.15fr;
+      gap:3rem; align-items:start; margin-top:2.5rem;
+    }
+    /* mobile: image on top, selectors below */
+    @media(max-width:768px){
+      .preview-layout { grid-template-columns:1fr; gap:1.75rem }
+      .preview-layout > .img-panel { order:-1 }
+      .img-panel { position:static !important }
+    }
 
-    /* PRICE CHIP */
-    .price-summary{background:linear-gradient(135deg,var(--g50),var(--white));border:2px solid var(--g300);border-radius:14px;padding:1.2rem 1.4rem;box-shadow:4px 4px 0 var(--g300);margin-top:.5rem}
-    .price-row{display:flex;justify-content:space-between;align-items:center;padding:.4rem 0;font-size:.85rem;color:var(--text2);border-bottom:1px dashed var(--border)}
-    .price-row:last-child{border-bottom:none;padding-top:.7rem;margin-top:.3rem}
-    .price-row.total{font-weight:900;font-size:1rem;color:var(--g800)}
-    .price-label{display:flex;align-items:center;gap:.4rem}
-    .price-val{font-family:'Press Start 2P',monospace;font-size:.6rem;color:var(--g700)}
-    .price-row.total .price-val{font-size:.75rem;color:var(--g600)}
-    .price-tag{font-family:'Press Start 2P',monospace;font-size:.32rem;background:var(--g100);color:var(--g700);padding:.15rem .5rem;border-radius:3px;border:2px solid var(--g300);box-shadow:1px 1px 0 var(--g300);margin-left:.4rem}
+    /* selector label */
+    .sel-label {
+      font-family:'IBM Plex Mono',monospace; font-size:.58rem;
+      color:var(--accent); letter-spacing:.1em; text-transform:uppercase;
+      margin-bottom:.85rem; display:flex; align-items:center; justify-content:space-between;
+    }
+    .sel-price { font-size:.55rem; color:var(--muted) }
+    .sel-price::before { content:'// ' }
+    .sel-block { margin-bottom:1.75rem }
 
-    /* ORDER BTN */
-    .order-btn{display:flex;align-items:center;justify-content:center;gap:.8rem;background:linear-gradient(135deg,#5865F2,#4752c4);color:#fff;border:2px solid #3b45a0;border-radius:12px;padding:1rem 2rem;font-size:.95rem;font-weight:800;width:100%;margin-top:1rem;transition:all .3s;box-shadow:4px 4px 0 #3b45a0;cursor:pointer;text-decoration:none}
-    .order-btn:hover{background:linear-gradient(135deg,#6b77ff,#5865F2);transform:translate(-2px,-3px);box-shadow:6px 7px 0 #3b45a0}
-    .order-btn svg{width:20px;height:20px;flex-shrink:0}
-    .order-note{font-size:.72rem;color:var(--text3);text-align:center;margin-top:.6rem;line-height:1.6}
+    /* THEME GRID — auto-fill so adding more themes just wraps */
+    .theme-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(88px,1fr));
+      gap:.45rem;
+    }
+    .t-card {
+      border:1px solid var(--border);
+      padding:.85rem .7rem; cursor:pointer;
+      background:var(--panel); transition:border-color .2s,background .2s;
+      text-align:center; position:relative;
+    }
+    .t-card:hover { border-color:#6b6358; background:#1a1916 }
+    .t-card.active { border-color:var(--accent); background:#1c1a14 }
+    .t-card.active::before {
+      content:''; position:absolute; top:0; left:0; right:0;
+      height:2px; background:var(--accent);
+    }
+    .t-card-name { font-size:.82rem; font-weight:700; color:var(--paper) }
+    .t-card-id { font-family:'IBM Plex Mono',monospace; font-size:.46rem; color:var(--muted); margin-top:.22rem }
 
-    /* PREVIEW IMAGE BOX */
-    .img-panel{position:sticky;top:90px}
-    .img-box{border:2px solid var(--border);border-radius:16px;overflow:hidden;background:linear-gradient(145deg,#0d3020,#1a5a35,#0d2518);aspect-ratio:16/10;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:6px 6px 0 var(--g300)}
-    .img-box::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;z-index:5;background:repeating-linear-gradient(90deg,var(--g500) 0,var(--g500) 10px,var(--g700) 10px,var(--g700) 20px)}
-    .preview-img{width:100%;height:100%;object-fit:contain;transition:opacity .35s ease,transform .35s ease;position:absolute;inset:0}
-    .preview-img.fade-out{opacity:0;transform:scale(.97)}
-    .preview-img.fade-in{opacity:1;transform:scale(1)}
-    .img-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.75rem;color:rgba(255,255,255,.5);position:absolute;inset:0;transition:opacity .3s}
-    .img-placeholder.hidden{opacity:0;pointer-events:none}
-    .img-placeholder-icon{font-size:2.5rem}
-    .img-placeholder-txt{font-family:'Press Start 2P',monospace;font-size:.4rem;text-align:center;line-height:2}
-    .img-label{margin-top:.75rem;display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap}
-    .img-label-chip{font-family:'Press Start 2P',monospace;font-size:.38rem;background:var(--g100);color:var(--g800);border:2px solid var(--g300);border-radius:6px;padding:.25rem .65rem;box-shadow:2px 2px 0 var(--g300);transition:all .3s}
-    .img-label-chip.active{background:var(--g700);color:#fff;border-color:var(--g800);box-shadow:2px 2px 0 var(--g900)}
-    .img-hint{font-size:.72rem;color:var(--text3)}
+    /* BUTTON GRID */
+    .btn-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(110px,1fr));
+      gap:.45rem;
+    }
+    .b-card {
+      border:1px solid var(--border);
+      padding:.85rem 1rem; cursor:pointer;
+      background:var(--panel); transition:border-color .2s,background .2s; position:relative;
+    }
+    .b-card:hover { border-color:#6b6358; background:#1a1916 }
+    .b-card.active { border-color:var(--accent); background:#1c1a14 }
+    .b-card.active::before {
+      content:''; position:absolute; top:0; left:0; right:0;
+      height:2px; background:var(--accent);
+    }
+    .b-card-name { font-size:.85rem; font-weight:700; color:var(--paper) }
+    .b-card-id { font-family:'IBM Plex Mono',monospace; font-size:.46rem; color:var(--muted); margin-top:.22rem }
 
-    /* INFO CARDS */
-    .info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:3.5rem}
-    @media(max-width:640px){.info-grid{grid-template-columns:1fr}}
-    .info-card{background:var(--white);border:2px solid var(--border);border-radius:14px;padding:1.3rem 1.2rem;box-shadow:4px 4px 0 var(--border);transition:all .4s cubic-bezier(.16,1,.3,1)}
-    .info-card:hover{transform:translateY(-4px);box-shadow:6px 8px 0 var(--g300);border-color:var(--g400)}
-    .info-card-icon{font-size:1.5rem;margin-bottom:.65rem}
-    .info-card-title{font-size:.88rem;font-weight:900;color:var(--text);margin-bottom:.4rem}
-    .info-card-body{font-size:.8rem;color:var(--text2);line-height:1.75}
+    /* PRICE BOX */
+    .price-box { border:1px solid var(--border); background:var(--panel) }
+    .price-line {
+      display:flex; justify-content:space-between; align-items:center;
+      padding:.65rem 1.1rem; font-size:.84rem; color:var(--muted);
+      border-bottom:1px solid var(--border2);
+    }
+    .price-line:last-child { border-bottom:none; padding-top:.85rem; margin-top:.1rem }
+    .price-line.total { color:var(--paper); font-weight:700 }
+    .price-num { font-family:'IBM Plex Mono',monospace; font-size:.68rem; color:var(--accent) }
+    .price-line.total .price-num { font-size:.8rem }
 
-    /* RIGHTS LIST */
-    .rights-list{display:flex;flex-direction:column;gap:.5rem;margin-top:.5rem}
-    .rights-item{display:flex;align-items:flex-start;gap:.6rem;font-size:.84rem;color:var(--text2);line-height:1.65}
-    .rights-dot{width:8px;height:8px;border-radius:50%;background:var(--g500);flex-shrink:0;margin-top:.45rem}
+    /* ORDER */
+    .order-area { margin-top:1.25rem }
+    .discord-btn {
+      display:flex; align-items:center; justify-content:center; gap:.7rem;
+      background:#5865f2; color:#fff;
+      font-family:'IBM Plex Mono',monospace; font-size:.72rem; font-weight:700;
+      letter-spacing:.05em; padding:.85rem 1.5rem; width:100%;
+      cursor:pointer; border:none; transition:background .2s,transform .15s;
+    }
+    .discord-btn:hover { background:#4752c4; transform:translateY(-1px) }
+    .discord-btn svg { width:17px; height:17px; flex-shrink:0 }
+    .order-note { font-size:.73rem; color:var(--muted); text-align:center; margin-top:.65rem; line-height:1.7 }
 
-    /* COLOR PILLS */
-    .color-pills{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.65rem}
-    .color-pill{font-size:.72rem;font-weight:700;border-radius:20px;padding:.22rem .75rem;border:2px solid transparent}
+    /* IMAGE PANEL */
+    .img-panel { position:sticky; top:66px }
+    .img-box {
+      aspect-ratio:16/10; border:1px solid var(--border);
+      background:#0a0a0a; position:relative; overflow:hidden;
+    }
+    .img-box::after {
+      content:''; position:absolute; inset:0; pointer-events:none; z-index:2;
+      background:linear-gradient(to bottom,transparent 55%,rgba(10,10,10,.3));
+    }
+    .preview-img {
+      width:100%; height:100%; object-fit:contain;
+      transition:opacity .3s,transform .3s; position:absolute; inset:0;
+    }
+    .preview-img.out { opacity:0; transform:scale(.98) }
+    .preview-img.in  { opacity:1; transform:scale(1) }
+    .img-ph {
+      position:absolute; inset:0;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center; gap:.5rem; transition:opacity .3s;
+    }
+    .img-ph.hidden { opacity:0; pointer-events:none }
+    .img-ph-txt {
+      font-family:'IBM Plex Mono',monospace; font-size:.5rem;
+      color:var(--border); letter-spacing:.1em; text-align:center; line-height:2.2;
+      white-space:pre-line;
+    }
+    .img-meta {
+      margin-top:.6rem; display:flex;
+      align-items:center; justify-content:space-between; gap:.5rem; flex-wrap:wrap;
+    }
+    .img-chips { display:flex; gap:.3rem; flex-wrap:wrap }
+    .chip {
+      font-family:'IBM Plex Mono',monospace; font-size:.47rem;
+      color:var(--muted); border:1px solid var(--border); padding:.18rem .52rem; letter-spacing:.04em;
+    }
+    .chip.hi { color:var(--accent); border-color:var(--accent-dim) }
+    .img-hint { font-size:.68rem; color:var(--muted) }
 
-    /* PRICING TABLE */
-    .price-table{border:2px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:4px 4px 0 var(--border)}
-    .pt-row{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.3rem;border-bottom:2px solid var(--border);background:var(--white);gap:1rem}
-    .pt-row:last-child{border-bottom:none}
-    .pt-row:nth-child(even){background:var(--g50)}
-    .pt-row-left{display:flex;align-items:center;gap:.65rem}
-    .pt-icon{font-size:1.2rem}
-    .pt-name{font-size:.88rem;font-weight:800;color:var(--text)}
-    .pt-desc{font-size:.72rem;color:var(--text3);margin-top:.15rem}
-    .pt-price{font-family:'Press Start 2P',monospace;font-size:.58rem;color:var(--g700);text-align:right;white-space:nowrap}
+    /* ── DETAILS ── */
+    .details-grid {
+      display:grid; grid-template-columns:repeat(3,1fr);
+      gap:1px; background:var(--border); border:1px solid var(--border); margin-top:2.5rem;
+    }
+    @media(max-width:640px){ .details-grid{ grid-template-columns:1fr } }
+    .d-cell { background:#0f0f0f; padding:1.75rem 1.4rem; transition:background .2s }
+    .d-cell:hover { background:var(--panel) }
+    .d-cell-title {
+      font-family:'IBM Plex Mono',monospace; font-size:.56rem;
+      color:var(--accent); letter-spacing:.1em; text-transform:uppercase; margin-bottom:1.1rem;
+    }
+    .d-cell-body { font-size:.84rem; color:var(--muted); line-height:1.9 }
+    .d-item { display:flex; align-items:flex-start; gap:.5rem; margin-bottom:.4rem }
+    .d-dash { font-family:'IBM Plex Mono',monospace; font-size:.7rem; color:var(--accent); flex-shrink:0; margin-top:.1rem }
 
-    /* WARNING BOX */
-    .warn-box{background:linear-gradient(135deg,#fef9e4,#fffdf0);border:2px solid #e8d090;border-radius:14px;padding:1.2rem 1.4rem;box-shadow:3px 3px 0 #e8d090;margin-top:2rem}
-    .warn-title{font-size:.85rem;font-weight:900;color:#7a5c00;display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem}
-    .warn-body{font-size:.82rem;color:#5a4200;line-height:1.75}
+    .color-row { display:flex; flex-wrap:wrap; gap:.3rem; margin-top:.4rem }
+    .cpill { font-size:.7rem; padding:.15rem .6rem; border:1px solid; font-weight:500 }
 
-    /* FOOTER */
-    .foot-grass{height:12px;background:repeating-linear-gradient(90deg,#3aad65 0,#3aad65 32px,#2d8a50 32px,#2d8a50 64px);position:relative;z-index:2}
-    .foot-grass::before{content:'';position:absolute;top:-8px;left:0;right:0;height:8px;
-      background:repeating-linear-gradient(90deg,#5cc480 0,#5cc480 16px,#3aad65 16px,#3aad65 32px,#2d8a50 32px,#2d8a50 48px,#4ab870 48px,#4ab870 64px)}
-    .foot{background:var(--g900);color:var(--g300);position:relative;z-index:2}
-    .foot-inner{max-width:1140px;margin:0 auto;padding:1.5rem 2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem}
-    .foot-txt{font-size:.82rem}
-    .foot-px{font-family:'Press Start 2P',monospace;font-size:.38rem}
+    .warn {
+      border-left:3px solid var(--accent);
+      padding:1.2rem 1.4rem; background:#13110a; margin-top:2.5rem;
+    }
+    .warn-title {
+      font-family:'IBM Plex Mono',monospace; font-size:.56rem;
+      color:var(--accent); letter-spacing:.1em; text-transform:uppercase; margin-bottom:.7rem;
+    }
+    .warn-body { font-size:.84rem; color:var(--muted); line-height:1.85 }
+    .warn-body strong { color:var(--paper) }
 
-    /* BTN */
-    .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.6rem;border-radius:6px;font-weight:800;font-size:.8rem;letter-spacing:.03em;transition:all .25s}
-    .btn-fill{background:var(--g700);color:#fff;border:2px solid var(--g800);box-shadow:3px 3px 0 var(--g800)}
-    .btn-fill:hover{background:var(--g800);transform:translate(-1px,-2px);box-shadow:4px 5px 0 var(--g900)}
+    /* ── PRICING TABLE ── */
+    .ptable { border:1px solid var(--border); overflow:hidden; max-width:520px; margin-top:2.5rem }
+    .pt-row {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:1.1rem 1.3rem; gap:1rem; border-bottom:1px solid var(--border); transition:background .2s;
+    }
+    .pt-row:last-child { border-bottom:none }
+    .pt-row:hover { background:var(--panel) }
+    .pt-left { display:flex; align-items:center; gap:.85rem }
+    .pt-num { font-family:'IBM Plex Mono',monospace; font-size:.52rem; color:var(--border); width:1.4rem; flex-shrink:0 }
+    .pt-name { font-size:.86rem; font-weight:700; color:var(--paper) }
+    .pt-desc { font-size:.73rem; color:var(--muted); margin-top:.12rem }
+    .pt-price { font-family:'IBM Plex Mono',monospace; font-size:.68rem; color:var(--accent); white-space:nowrap }
+
+    /* ── FOOTER ── */
+    .foot { border-top:1px solid var(--border); padding:1.25rem 1.5rem }
+    .foot-inner {
+      max-width:1080px; margin:0 auto;
+      display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.5rem;
+    }
+    .foot-txt { font-size:.76rem; color:var(--muted) }
+    .foot-mono { font-family:'IBM Plex Mono',monospace; font-size:.52rem; color:var(--border) }
+
+    /* reveal */
+    .rv { opacity:0; transform:translateY(12px); transition:opacity .55s ease,transform .55s ease }
+    .rv.show { opacity:1; transform:translateY(0) }
+    .d1{transition-delay:.07s}.d2{transition-delay:.14s}.d3{transition-delay:.21s}
   </style>
 </head>
 <body>
-<div class="petal-wrap" id="petalWrap"></div>
 
 <!-- NAV -->
-<nav class="nav" id="navbar">
+<nav class="nav">
   <div class="nav-inner">
-    <a href="#" class="logo" onclick="event.preventDefault();window.scrollTo({top:0,behavior:'smooth'})">
-      <span class="logo-leaf">🌿</span> MineBit<b>Store</b>
-    </a>
+    <a href="#" class="logo">Mine<span>Bit</span>.store</a>
     <div class="nav-links">
       <a href="#preview">ตัวอย่าง</a>
       <a href="#details">รายละเอียด</a>
       <a href="#pricing">ราคา</a>
-      <a href="#order">สั่งซื้อ</a>
     </div>
-    <button class="burger" id="burger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+    <button class="burger" id="burger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </button>
   </div>
   <div class="m-menu" id="mmenu">
-    <a href="#preview" onclick="toggleMenu()">ตัวอย่าง</a>
-    <a href="#details" onclick="toggleMenu()">รายละเอียด</a>
-    <a href="#pricing" onclick="toggleMenu()">ราคา</a>
-    <a href="#order" onclick="toggleMenu()">สั่งซื้อ</a>
+    <a href="#preview" onclick="closeMenu()">ตัวอย่าง</a>
+    <a href="#details" onclick="closeMenu()">รายละเอียด</a>
+    <a href="#pricing" onclick="closeMenu()">ราคา</a>
   </div>
 </nav>
 
 <!-- HERO -->
-<div class="hero-strip">
-  <div class="rv">
-    <div class="hero-badge"><span class="hero-badge-dot"></span> MCPE Add-on</div>
-  </div>
-  <h1 class="rv d1">ชุดปรับแต่ง <em>Form UI</em><br/>สำหรับ MCPE Server</h1>
-  <p class="hero-sub rv d2">เปลี่ยนฟอร์มธรรมดา ➜ ให้ดูสวย ทันสมัย ใช้งานง่าย<br/>เลือกธีมและรูปแบบปุ่มที่ชอบได้เลย</p>
-  <div style="margin-top:1.6rem;padding-bottom:1.5rem" class="rv d3">
-    <a href="#preview" class="btn btn-fill">ดูตัวอย่างสินค้า
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
-    </a>
-  </div>
-</div>
-
-<!-- TICKER -->
-<div class="ticker">
-  <div class="ticker-track">
-    <span class="ticker-item">Custom Form UI</span><span class="ticker-item">MCPE Add-on</span><span class="ticker-item">3 Themes</span>
-    <span class="ticker-item">Button Styles</span><span class="ticker-item">JSON UI</span><span class="ticker-item">Bedrock</span>
-    <span class="ticker-item">Server Form</span><span class="ticker-item">Crafted Shop</span><span class="ticker-item">ปรับแต่งได้</span>
-    <span class="ticker-item">Custom Form UI</span><span class="ticker-item">MCPE Add-on</span><span class="ticker-item">3 Themes</span>
-    <span class="ticker-item">Button Styles</span><span class="ticker-item">JSON UI</span><span class="ticker-item">Bedrock</span>
-    <span class="ticker-item">Server Form</span><span class="ticker-item">Crafted Shop</span><span class="ticker-item">ปรับแต่งได้</span>
+<div class="hero-wrap">
+  <div class="hero">
+    <div class="hero-eye rv">MCPE Bedrock &mdash; Add-on</div>
+    <h1 class="rv d1">Custom<br/><span class="hi">Form UI</span></h1>
+    <p class="hero-desc rv d2">
+      เปลี่ยนหน้าฟอร์มธรรมดาในเซิร์ฟให้มีสไตล์ เลือกธีมและรูปแบบปุ่มได้เอง ติดตั้งง่าย
+    </p>
+    <div class="hero-cta rv d3">
+      <a href="#preview" class="btn-primary">
+        ดูตัวอย่าง
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+      </a>
+      <a href="#pricing" class="btn-ghost">ดูราคา &rarr;</a>
+    </div>
+    <div class="hero-aside">FORM-UI // v1.0 // 2025</div>
   </div>
 </div>
 
-<!-- PREVIEW SECTION -->
+<div class="div-wrap"><div class="div"></div></div>
+
+<!-- PREVIEW -->
 <section class="sec" id="preview">
-  <div class="sec-inner">
-    <div class="sec-head rv">
-      <p class="sec-label">Preview</p>
-      <h2 class="sec-title">ลองเลือกดู<span>ก่อนสั่งซื้อ</span></h2>
-      <p class="sec-sub">เลือกธีมและรูปแบบปุ่มที่ต้องการ ภาพตัวอย่างจะอัปเดตโดยอัตโนมัติ</p>
-    </div>
+  <div class="rv">
+    <p class="sec-tag">01 &mdash; Preview</p>
+    <h2 class="sec-title">ลองเลือกก่อนซื้อ</h2>
+    <p class="sec-sub">เลือกธีมและปุ่ม ภาพตัวอย่างจะอัปเดตตามที่เลือก</p>
+  </div>
 
-    <div class="preview-layout rv d1">
-      <!-- LEFT: SELECTORS -->
-      <div class="selector-panel">
-
-        <!-- THEME SELECTOR -->
-        <div>
-          <div class="sel-group-title">
-            <span>🎨</span> เลือกธีม
-            <span class="price-tag">70 ฿ / ธีม</span>
-          </div>
-          <div class="theme-cards">
-            <div class="theme-card active" onclick="selectTheme(1,this)">
-              <span class="theme-card-icon">🌿</span>
-              <span class="theme-card-name">ธีม 1</span>
-              <span class="theme-card-id">THEME-01</span>
-            </div>
-            <div class="theme-card" onclick="selectTheme(2,this)">
-              <span class="theme-card-icon">🌸</span>
-              <span class="theme-card-name">ธีม 2</span>
-              <span class="theme-card-id">THEME-02</span>
-            </div>
-            <div class="theme-card" onclick="selectTheme(3,this)">
-              <span class="theme-card-icon">⚡</span>
-              <span class="theme-card-name">ธีม 3</span>
-              <span class="theme-card-id">THEME-03</span>
-            </div>
-          </div>
+  <div class="preview-layout">
+    <!-- LEFT -->
+    <div>
+      <div class="sel-block rv d1">
+        <div class="sel-label">
+          Theme
+          <span class="sel-price">70 บาท / ธีม</span>
         </div>
+        <div class="theme-grid" id="themeGrid"></div>
+      </div>
 
-        <!-- BUTTON STYLE SELECTOR -->
-        <div>
-          <div class="sel-group-title">
-            <span>🔘</span> เลือกรูปแบบปุ่ม
-            <span class="price-tag">150 ฿ / แบบ</span>
-          </div>
-          <div class="btn-style-cards">
-            <div class="bs-card active" onclick="selectBtn(1,this)">
-              <span class="bs-card-icon">◼</span>
-              <span class="bs-card-name">รูปแบบ 1</span>
-              <span class="bs-card-id">STYLE-01</span>
-            </div>
-            <div class="bs-card" onclick="selectBtn(2,this)">
-              <span class="bs-card-icon">◆</span>
-              <span class="bs-card-name">รูปแบบ 2</span>
-              <span class="bs-card-id">STYLE-02</span>
-            </div>
-          </div>
+      <div class="sel-block rv d2">
+        <div class="sel-label">
+          Button Style
+          <span class="sel-price">150 บาท / แบบ</span>
         </div>
+        <div class="btn-grid" id="btnGrid"></div>
+      </div>
 
-        <!-- PRICE SUMMARY -->
-        <div class="price-summary">
-          <div class="price-row">
-            <span class="price-label">🧩 ธีม (<span id="sum-theme-name">ธีม 1</span>)</span>
-            <span class="price-val">70 ฿</span>
-          </div>
-          <div class="price-row">
-            <span class="price-label">🔘 รูปแบบปุ่ม (<span id="sum-btn-name">รูปแบบ 1</span>)</span>
-            <span class="price-val">150 ฿</span>
-          </div>
-          <div class="price-row total">
-            <span class="price-label">💰 ยอดรวม</span>
-            <span class="price-val">220 ฿</span>
-          </div>
+      <div class="price-box rv d3">
+        <div class="price-line">
+          <span>Theme &mdash; <span id="sum-theme">-</span></span>
+          <span class="price-num">70 &#3647;</span>
         </div>
-
-        <!-- ORDER BUTTON -->
-        <div id="order">
-          <a href="https://discord.com/channels/1381505722713636984/1382775472512827523" target="_blank" rel="noopener" class="order-btn">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/>
-            </svg>
-            สั่งซื้อผ่าน Discord
-          </a>
-          <p class="order-note">คลิกเพื่อไปที่ช่องสั่งซื้อใน Discord<br/>แจ้งธีมและรูปแบบปุ่มที่เลือกได้เลย 👆</p>
+        <div class="price-line">
+          <span>Button &mdash; <span id="sum-btn">-</span></span>
+          <span class="price-num">150 &#3647;</span>
+        </div>
+        <div class="price-line total">
+          <span>รวม</span>
+          <span class="price-num">220 &#3647;</span>
         </div>
       </div>
 
-      <!-- RIGHT: IMAGE PREVIEW -->
-      <div class="img-panel rv d2">
-        <div class="img-box" id="imgBox">
-          <img src="" alt="ตัวอย่างสินค้า" class="preview-img fade-in" id="previewImg" style="display:none"/>
-          <div class="img-placeholder" id="imgPlaceholder">
-            <span class="img-placeholder-icon">🖼️</span>
-            <span class="img-placeholder-txt">เลือกธีมและรูปแบบปุ่ม<br/>เพื่อดูตัวอย่าง</span>
-          </div>
+      <div class="order-area rv d3" id="order">
+        <a href="https://discord.com/channels/1381505722713636984/1382775472512827523"
+           target="_blank" rel="noopener" class="discord-btn">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286z"/>
+          </svg>
+          สั่งซื้อผ่าน Discord
+        </a>
+        <p class="order-note">แจ้งธีมและรูปแบบปุ่มที่เลือกในช่อง Discord ได้เลย</p>
+      </div>
+    </div>
+
+    <!-- RIGHT: IMAGE -->
+    <div class="img-panel rv d2">
+      <div class="img-box">
+        <img src="" alt="" class="preview-img in" id="previewImg" style="display:none"/>
+        <div class="img-ph" id="imgPh">
+          <div class="img-ph-txt">SELECT THEME
++ BUTTON STYLE
+TO PREVIEW</div>
         </div>
-        <div class="img-label">
-          <div style="display:flex;gap:.4rem;flex-wrap:wrap" id="chipContainer">
-            <span class="img-label-chip active" id="chipTheme">THEME-01</span>
-            <span class="img-label-chip active" id="chipBtn">STYLE-01</span>
-            <span class="img-label-chip active" id="chipFile">FILE: 11.png</span>
-          </div>
-          <span class="img-hint">↑ ไฟล์ภาพตัวอย่าง</span>
+      </div>
+      <div class="img-meta">
+        <div class="img-chips">
+          <span class="chip hi" id="chipTheme">-</span>
+          <span class="chip hi" id="chipBtn">-</span>
+          <span class="chip" id="chipFile">-</span>
         </div>
+        <span class="img-hint">preview</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- DETAILS SECTION -->
-<section class="sec sec-w" id="details">
-  <div class="sec-inner">
-    <div class="sec-head rv">
-      <p class="sec-label">Details</p>
-      <h2 class="sec-title">รายละเอียด<span>สินค้า</span></h2>
-    </div>
+<div class="div-wrap"><div class="div"></div></div>
 
-    <div class="info-grid">
-      <div class="info-card rv d1">
-        <div class="info-card-icon">✅</div>
-        <div class="info-card-title">สิทธิ์ที่ได้รับ</div>
-        <div class="info-card-body">
-          <div class="rights-list">
-            <div class="rights-item"><span class="rights-dot"></span> แก้ไข Prefix เรียกใช้ฟอร์มได้ฟรี</div>
-            <div class="rights-item"><span class="rights-dot"></span> เปลี่ยนสี Header ได้</div>
-          </div>
-        </div>
+<!-- DETAILS -->
+<section class="sec" id="details">
+  <div class="rv">
+    <p class="sec-tag">02 &mdash; Details</p>
+    <h2 class="sec-title">รายละเอียดสินค้า</h2>
+  </div>
+
+  <div class="details-grid">
+    <div class="d-cell rv d1">
+      <div class="d-cell-title">สิทธิ์ที่ได้รับ</div>
+      <div class="d-cell-body">
+        <div class="d-item"><span class="d-dash">--</span> แก้ไข Prefix เรียกฟอร์มได้ฟรี</div>
+        <div class="d-item"><span class="d-dash">--</span> เปลี่ยนสี Header ได้</div>
       </div>
-      <div class="info-card rv d2">
-        <div class="info-card-icon">🎨</div>
-        <div class="info-card-title">สีที่รองรับ</div>
-        <div class="info-card-body">
-          <div class="color-pills">
-            <span class="color-pill" style="background:#fee2e2;color:#991b1b;border-color:#fca5a5">แดง</span>
-            <span class="color-pill" style="background:#ffedd5;color:#9a3412;border-color:#fdba74">ส้ม</span>
-            <span class="color-pill" style="background:#fef9c3;color:#854d0e;border-color:#fde047">เหลือง</span>
-            <span class="color-pill" style="background:#dcfce7;color:#166534;border-color:#86efac">เขียว</span>
-            <span class="color-pill" style="background:#dbeafe;color:#1e40af;border-color:#93c5fd">ฟ้า</span>
-            <span class="color-pill" style="background:#ede9fe;color:#5b21b6;border-color:#c4b5fd">ม่วง</span>
-            <span class="color-pill" style="background:#f8fafc;color:#334155;border-color:#cbd5e1">ขาว</span>
-            <span class="color-pill" style="background:#1e293b;color:#f1f5f9;border-color:#334155">ดำ</span>
-          </div>
-        </div>
-      </div>
-      <div class="info-card rv d3">
-        <div class="info-card-icon">📌</div>
-        <div class="info-card-title">เหมาะกับใคร?</div>
-        <div class="info-card-body">
-          <div class="rights-list">
-            <div class="rights-item"><span class="rights-dot"></span> คนที่อยากให้ Form UI ดูสวยขึ้น</div>
-            <div class="rights-item"><span class="rights-dot"></span> คนที่อยากให้เซิร์ฟเวอร์มีเอกลักษณ์</div>
-            <div class="rights-item"><span class="rights-dot"></span> คนที่อยากให้ฟอร์มดูทันสมัย</div>
-          </div>
+    </div>
+    <div class="d-cell rv d2">
+      <div class="d-cell-title">สีที่รองรับ</div>
+      <div class="d-cell-body">
+        <div class="color-row">
+          <span class="cpill" style="background:#fee2e2;color:#991b1b;border-color:#fca5a5">แดง</span>
+          <span class="cpill" style="background:#ffedd5;color:#9a3412;border-color:#fdba74">ส้ม</span>
+          <span class="cpill" style="background:#fef9c3;color:#854d0e;border-color:#fde047">เหลือง</span>
+          <span class="cpill" style="background:#dcfce7;color:#166534;border-color:#86efac">เขียว</span>
+          <span class="cpill" style="background:#dbeafe;color:#1e40af;border-color:#93c5fd">ฟ้า</span>
+          <span class="cpill" style="background:#ede9fe;color:#5b21b6;border-color:#c4b5fd">ม่วง</span>
+          <span class="cpill" style="background:#f8fafc;color:#334155;border-color:#cbd5e1">ขาว</span>
+          <span class="cpill" style="background:#1e293b;color:#f1f5f9;border-color:#334155">ดำ</span>
         </div>
       </div>
     </div>
-
-    <div class="warn-box rv">
-      <div class="warn-title">⚠️ หมายเหตุ</div>
-      <div class="warn-body">
-        หากมีแอดออนอื่นที่ Custom Form UI อยู่แล้ว อาจเกิดปัญหาโค้ดชนกัน ต้องส่งไฟล์ให้ทางร้านเช็กก่อน
-        <br/><br/>
-        <strong>💰 ค่าบริการแก้ไขเพิ่มเติม</strong> — เริ่มต้น <strong>30 บาทขึ้นไป</strong> (ขึ้นกับความยากง่ายของงาน)
+    <div class="d-cell rv d3">
+      <div class="d-cell-title">เหมาะกับใคร</div>
+      <div class="d-cell-body">
+        <div class="d-item"><span class="d-dash">--</span> อยากให้ Form UI ดูสวยขึ้น</div>
+        <div class="d-item"><span class="d-dash">--</span> อยากให้เซิร์ฟมีเอกลักษณ์ของตัวเอง</div>
+        <div class="d-item"><span class="d-dash">--</span> อยากให้ฟอร์มดูทันสมัย</div>
       </div>
     </div>
   </div>
+
+  <div class="warn rv">
+    <div class="warn-title">// หมายเหตุ</div>
+    <div class="warn-body">
+      ถ้ามีแอดออนอื่นที่ Custom Form UI ไว้อยู่แล้ว อาจเกิดโค้ดชนกัน ต้องส่งไฟล์ให้ทางร้านเช็กก่อน
+      <br/><br/>
+      <strong>ค่าแก้โค้ดชนกัน</strong> &mdash; เริ่มต้น <strong>30 บาท</strong> ขึ้นกับความยากของงาน
+    </div>
+  </div>
 </section>
+
+<div class="div-wrap"><div class="div"></div></div>
 
 <!-- PRICING -->
 <section class="sec" id="pricing">
-  <div class="sec-inner">
-    <div class="sec-head rv">
-      <p class="sec-label">Pricing</p>
-      <h2 class="sec-title">ตาราง<span>ราคา</span></h2>
-    </div>
+  <div class="rv">
+    <p class="sec-tag">03 &mdash; Pricing</p>
+    <h2 class="sec-title">ตารางราคา</h2>
+  </div>
 
-    <div style="max-width:560px" class="rv d1">
-      <div class="price-table">
-        <div class="pt-row">
-          <div class="pt-row-left">
-            <span class="pt-icon">🧩</span>
-            <div>
-              <div class="pt-name">ธีม (Theme)</div>
-              <div class="pt-desc">เลือกได้ 3 ธีม • เปลี่ยนสี Header ได้</div>
-            </div>
-          </div>
-          <div class="pt-price">70 ฿ / ธีม</div>
-        </div>
-        <div class="pt-row">
-          <div class="pt-row-left">
-            <span class="pt-icon">🔘</span>
-            <div>
-              <div class="pt-name">รูปแบบปุ่ม (Button Style)</div>
-              <div class="pt-desc">เลือกได้หลายแบบ • แก้ Prefix ได้ฟรี</div>
-            </div>
-          </div>
-          <div class="pt-price">150 ฿ / แบบ</div>
-        </div>
-        <div class="pt-row">
-          <div class="pt-row-left">
-            <span class="pt-icon">🔧</span>
-            <div>
-              <div class="pt-name">แก้ไขโค้ดชนกัน</div>
-              <div class="pt-desc">กรณีมี Add-on อื่น Custom Form UI อยู่แล้ว</div>
-            </div>
-          </div>
-          <div class="pt-price">30 ฿ ขึ้นไป</div>
+  <div class="ptable rv d1">
+    <div class="pt-row">
+      <div class="pt-left">
+        <span class="pt-num">01</span>
+        <div>
+          <div class="pt-name">Theme</div>
+          <div class="pt-desc">3 ธีมให้เลือก &middot; เปลี่ยนสี Header ได้</div>
         </div>
       </div>
+      <div class="pt-price">70 &#3647; / ธีม</div>
+    </div>
+    <div class="pt-row">
+      <div class="pt-left">
+        <span class="pt-num">02</span>
+        <div>
+          <div class="pt-name">Button Style</div>
+          <div class="pt-desc">หลายแบบ &middot; แก้ Prefix ได้ฟรี</div>
+        </div>
+      </div>
+      <div class="pt-price">150 &#3647; / แบบ</div>
+    </div>
+    <div class="pt-row">
+      <div class="pt-left">
+        <span class="pt-num">03</span>
+        <div>
+          <div class="pt-name">แก้โค้ดชนกัน</div>
+          <div class="pt-desc">กรณีมีแอดออนอื่น Custom Form UI อยู่แล้ว</div>
+        </div>
+      </div>
+      <div class="pt-price">30 &#3647; ขึ้นไป</div>
     </div>
   </div>
 </section>
 
 <!-- FOOTER -->
-<div class="foot-grass"></div>
 <footer class="foot">
   <div class="foot-inner">
-    <span class="foot-txt">Handcrafted with 🌿 & ⚔️</span>
-    <span class="foot-px">crafted — 2025</span>
+    <span class="foot-txt">MineBit.store &mdash; handmade add-ons for MCPE</span>
+    <span class="foot-mono">2025</span>
   </div>
 </footer>
 
 <script>
-  var selectedTheme = 1;
-  var selectedBtn   = 1;
+/* ═══════════════════════════════════════════════════════
+   CONFIG — เพิ่มธีมหรือปุ่มแค่เพิ่มออบเจ็กต์ในอาร์เรย์
+   ═══════════════════════════════════════════════════════ */
+var THEMES = [
+  { id: 1, name: 'ธีม 1', code: 'T-01' },
+  { id: 2, name: 'ธีม 2', code: 'T-02' },
+  { id: 3, name: 'ธีม 3', code: 'T-03' },
+  // { id: 4, name: 'ธีม 4', code: 'T-04' },  <-- เพิ่มตรงนี้
+];
 
-  function selectTheme(n, el) {
-    selectedTheme = n;
-    document.querySelectorAll('.theme-card').forEach(function(c){ c.classList.remove('active'); });
-    el.classList.add('active');
-    document.getElementById('sum-theme-name').textContent = 'ธีม ' + n;
-    document.getElementById('chipTheme').textContent = 'THEME-0' + n;
-    updatePreview();
+var BUTTONS = [
+  { id: 1, name: 'รูปแบบ 1', code: 'STYLE-01' },
+  { id: 2, name: 'รูปแบบ 2', code: 'STYLE-02' },
+  // { id: 3, name: 'รูปแบบ 3', code: 'STYLE-03' },  <-- เพิ่มตรงนี้
+];
+
+/* ชื่อไฟล์ภาพ: img/{themeId}{btnId}.png  เช่น img/11.png, img/21.png */
+/* ═══════════════════════════════════════════════════════ */
+
+var selTheme = THEMES[0].id;
+var selBtn   = BUTTONS[0].id;
+
+function getTheme(id) { return THEMES.find(function(t){ return t.id === id }) || THEMES[0]; }
+function getBtn(id)   { return BUTTONS.find(function(b){ return b.id === id }) || BUTTONS[0]; }
+
+/* build theme cards */
+(function() {
+  var grid = document.getElementById('themeGrid');
+  THEMES.forEach(function(t) {
+    var el = document.createElement('div');
+    el.className = 't-card' + (t.id === selTheme ? ' active' : '');
+    el.dataset.id = t.id;
+    el.innerHTML = '<div class="t-card-name">' + t.name + '</div>'
+                 + '<div class="t-card-id">' + t.code + '</div>';
+    el.addEventListener('click', function() { selectTheme(t.id); });
+    grid.appendChild(el);
+  });
+})();
+
+/* build button cards */
+(function() {
+  var grid = document.getElementById('btnGrid');
+  BUTTONS.forEach(function(b) {
+    var el = document.createElement('div');
+    el.className = 'b-card' + (b.id === selBtn ? ' active' : '');
+    el.dataset.id = b.id;
+    el.innerHTML = '<div class="b-card-name">' + b.name + '</div>'
+                 + '<div class="b-card-id">' + b.code + '</div>';
+    el.addEventListener('click', function() { selectBtn(b.id); });
+    grid.appendChild(el);
+  });
+})();
+
+function selectTheme(id) {
+  selTheme = id;
+  document.querySelectorAll('.t-card').forEach(function(c) {
+    c.classList.toggle('active', +c.dataset.id === id);
+  });
+  document.getElementById('sum-theme').textContent  = getTheme(id).name;
+  document.getElementById('chipTheme').textContent  = getTheme(id).code;
+  updatePreview();
+}
+
+function selectBtn(id) {
+  selBtn = id;
+  document.querySelectorAll('.b-card').forEach(function(c) {
+    c.classList.toggle('active', +c.dataset.id === id);
+  });
+  document.getElementById('sum-btn').textContent = getBtn(id).name;
+  document.getElementById('chipBtn').textContent = getBtn(id).code;
+  updatePreview();
+}
+
+function updatePreview() {
+  var filename = selTheme + '' + selBtn + '.png';
+  var path = 'img/' + filename;
+  document.getElementById('chipFile').textContent = filename;
+
+  var img = document.getElementById('previewImg');
+  var ph  = document.getElementById('imgPh');
+
+  img.classList.remove('in');
+  img.classList.add('out');
+
+  setTimeout(function() {
+    img.src = path;
+    img.style.display = 'block';
+    ph.classList.add('hidden');
+    img.onload = function() {
+      img.classList.remove('out');
+      img.classList.add('in');
+    };
+    img.onerror = function() {
+      img.style.display = 'none';
+      ph.classList.remove('hidden');
+      ph.querySelector('.img-ph-txt').textContent =
+        'NO PREVIEW\n' + getTheme(selTheme).code + ' + ' + getBtn(selBtn).code;
+    };
+  }, 200);
+}
+
+/* init */
+window.addEventListener('load', function() {
+  document.getElementById('sum-theme').textContent  = getTheme(selTheme).name;
+  document.getElementById('sum-btn').textContent    = getBtn(selBtn).name;
+  document.getElementById('chipTheme').textContent  = getTheme(selTheme).code;
+  document.getElementById('chipBtn').textContent    = getBtn(selBtn).code;
+  updatePreview();
+});
+
+/* nav */
+function toggleMenu() {
+  document.getElementById('burger').classList.toggle('open');
+  document.getElementById('mmenu').classList.toggle('open');
+}
+function closeMenu() {
+  document.getElementById('burger').classList.remove('open');
+  document.getElementById('mmenu').classList.remove('open');
+}
+
+/* reveal on scroll */
+(function() {
+  var els = document.querySelectorAll('.rv');
+  if (!('IntersectionObserver' in window)) {
+    els.forEach(function(e){ e.classList.add('show'); }); return;
   }
-
-  function selectBtn(n, el) {
-    selectedBtn = n;
-    document.querySelectorAll('.bs-card').forEach(function(c){ c.classList.remove('active'); });
-    el.classList.add('active');
-    document.getElementById('sum-btn-name').textContent = 'รูปแบบ ' + n;
-    document.getElementById('chipBtn').textContent = 'STYLE-0' + n;
-    updatePreview();
-  }
-
-  function updatePreview() {
-    var filename = selectedTheme + '' + selectedBtn + '.png';
-    var path = 'img/' + filename;
-    document.getElementById('chipFile').textContent = 'FILE: ' + filename;
-
-    var img = document.getElementById('previewImg');
-    var ph  = document.getElementById('imgPlaceholder');
-
-    // fade out
-    img.classList.remove('fade-in');
-    img.classList.add('fade-out');
-
-    setTimeout(function(){
-      img.src = path;
-      img.style.display = 'block';
-      ph.classList.add('hidden');
-
-      img.onload = function(){
-        img.classList.remove('fade-out');
-        img.classList.add('fade-in');
-      };
-      img.onerror = function(){
-        img.style.display = 'none';
-        ph.classList.remove('hidden');
-        ph.querySelector('.img-placeholder-txt').textContent = 'ยังไม่มีภาพตัวอย่าง\nธีม ' + selectedTheme + ' + รูปแบบ ' + selectedBtn;
-      };
-    }, 180);
-  }
-
-  // trigger first preview on load
-  window.addEventListener('load', function(){ updatePreview(); });
-
-  // NAV scroll
-  window.addEventListener('scroll', function(){
-    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
-  }, {passive:true});
-
-  function toggleMenu(){
-    document.getElementById('burger').classList.toggle('open');
-    document.getElementById('mmenu').classList.toggle('open');
-  }
-
-  // Reveal on scroll
-  (function(){
-    var els = document.querySelectorAll('.rv');
-    if(!('IntersectionObserver' in window)){ els.forEach(function(e){ e.classList.add('show'); }); return; }
-    var obs = new IntersectionObserver(function(entries){
-      entries.forEach(function(e){
-        if(e.isIntersecting){ e.target.classList.add('show'); obs.unobserve(e.target); }
-      });
-    }, {threshold:.12});
-    els.forEach(function(e){ obs.observe(e); });
-  })();
-
-  // Petals
-  (function(){
-    var wrap = document.getElementById('petalWrap');
-    var chars = ['✧','✦','✯','✰','✱','✲','✳'];
-    for(var i = 0; i < 14; i++){
-      var el = document.createElement('div');
-      el.className = 'pk';
-      el.textContent = chars[i % chars.length];
-      el.style.cssText = 'left:'+(Math.random()*100)+'%;animation-duration:'+(7+Math.random()*10)+'s;animation-delay:'+(Math.random()*14)+'s;color:rgba(58,173,101,'+(0.15+Math.random()*.2)+');font-size:'+(9+Math.random()*8)+'px;top:-30px';
-      wrap.appendChild(el);
-    }
-  })();
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) { e.target.classList.add('show'); obs.unobserve(e.target); }
+    });
+  }, { threshold: .08 });
+  els.forEach(function(e) { obs.observe(e); });
+})();
 </script>
 </body>
 </html>
