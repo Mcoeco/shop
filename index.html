@@ -21,9 +21,9 @@
             <div class="nav-btns">
                 <div class="nav-vdiv"></div>
                 <nav>
-                    <a href="#preview" class="nav-link">Preview</a>
-                    <a href="#details" class="nav-link">Details</a>
-                    <a href="#pricing" class="nav-link">Pricing</a>
+                    <a href="#preview" class="nav-link">ตัวอย่าง</a>
+                    <a href="#details" class="nav-link">ข้อมูลเพิ่มเติม</a>
+                    <a href="#pricing" class="nav-link">ราคา</a>
                 </nav>
                 <div class="nav-vdiv"></div>
                 <button class="burger" id="burger" onclick="toggleMenu()">
@@ -33,9 +33,9 @@
         </div>
     </div>
     <div class="mob-menu" id="mobnav">
-        <a href="#preview" class="nav-link" onclick="closeMenu()">Preview</a>
-        <a href="#details" class="nav-link" onclick="closeMenu()">Details</a>
-        <a href="#pricing" class="nav-link" onclick="closeMenu()">Pricing</a>
+        <a href="#preview" class="nav-link" onclick="closeMenu()">ตัวอย่าง</a>
+        <a href="#details" class="nav-link" onclick="closeMenu()">ข้อมูลเพิ่มเติม</a>
+        <a href="#pricing" class="nav-link" onclick="closeMenu()">ราคา</a>
     </div>
 
     <div class="hero-section">
@@ -57,16 +57,18 @@
             </div>
             <div class="hero-stats rv d3">
                 <div class="stat">
+                    <div class="stat-l">ธีม</div>
                     <div class="stat-v">3</div>
-                    <div class="stat-l">Themes</div>
+
                 </div>
                 <div class="stat">
+                    <div class="stat-l">รูปแบบปุ่ม</div>
                     <div class="stat-v">2</div>
-                    <div class="stat-l">Buttons</div>
+
                 </div>
                 <div class="stat">
-                    <div class="stat-v">220฿</div>
-                    <div class="stat-l">Start</div>
+                    <div class="stat-l">เริ่มต้นเพียง</div>
+                    <div class="stat-v">฿70</div>
                 </div>
             </div>
         </div>
@@ -77,48 +79,48 @@
     <div class="content-section" id="preview">
         <div class="content-inner">
             <div class="rv">
-                <div class="s-over">Preview & Order</div>
-                <div class="s-title">Theme, Button & Color</div>
+                <div class="s-over">ตัวอย่าง & หน้าตาสินค้า</div>
+                <div class="s-title">ธีม , รูปแบบปุ่ม</div>
                 <div class="s-sub">เลือกครบแล้วภาพตัวอย่างจะอัปเดตอัตโนมัติ</div>
             </div>
             <div class="prev-layout">
                 <div>
                     <div class="sl-blk rv d1">
-                        <div class="sl">Theme <span class="sl-price">70 ฿ / theme</span></div>
+                        <div class="sl">Theme <span class="sl-price">70 ฿ / ธีม</span></div>
                         <div class="sel-grid" id="themeGrid"></div>
                     </div>
                     <div class="sl-blk rv d2">
-                        <div class="sl">Button Style <span class="sl-price">150 ฿ / style</span></div>
+                        <div class="sl">Button Style <span class="sl-price">150 ฿ / รูปแบบปุ่ม</span></div>
                         <div class="sel-grid" id="btnGrid"></div>
                     </div>
                     <div class="sl-blk rv d3">
                         <div class="sl">Header Color <span id="colorAvailTag"
                                 style="font-family:Mojangles;font-size:.85rem;color:var(--label-dim)">-</span></div>
                         <div class="cc-grid" id="colorGrid"></div>
-                        <div class="no-color-note" id="noColorNote">Theam นี้ไม่รองรับการเปลี่ยนสี Header</div>
+                        <div class="no-color-note" id="noColorNote">ธีมนี้ไม่รองรับการเปลี่ยนสี Header</div>
                     </div>
                     <div class="ore-card pbox rv d3">
                         <div class="ore-card-top"></div>
-                        <div class="pbox-head">Summary</div>
-                        <div class="pr"><span>Theme - <span id="sum-t">Theme 1</span></span><span class="pv">70 ฿</span>
+                        <div class="pbox-head">คำนวณราคาทั้งหมด</div>
+                        <div class="pr"><span>ธีม - <span id="sum-t">Theme 1</span></span><span class="pv">฿70</span>
                         </div>
-                        <div class="pr"><span>Button - <span id="sum-b">Style 1</span></span><span class="pv">150
-                                ฿</span></div>
-                        <div class="pr tot"><span>Total</span><span class="pv">220 ฿</span></div>
+                        <div class="pr"><span>รูปแบบปุ่ม - <span id="sum-b">Style 1</span></span><span class="pv">฿150
+                            </span></div>
+                        <div class="pr tot"><span>รวมทั้งหมด</span><span class="pv">฿220</span></div>
                         <div class="ore-card-bot"></div>
                     </div>
                     <div class="rv d3" style="margin-top:12px">
-                        <a href="https://discord.com/invite/DztQe9Rv49" target="_blank"
-                            rel="noopener" class="ore-btn purple center full">
+                        <a href="https://discord.com/invite/DztQe9Rv49" target="_blank" rel="noopener"
+                            class="ore-btn purple center full">
                             <span class="btn-inner">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                                     <path
                                         d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286z" />
                                 </svg>
-                                Order via Discord
+                                สั่งสินค้า
                             </span>
                         </a>
-                        <p class="disc-note">แจ้ง Theme, Button และสีใน Discord</p>
+                        <p class="disc-note">แจ้ง ธีม,รูปแบบปุ่ม และสี หรือถ่ายรูปตัวอย่างและส่งไปยัง discord</p>
                     </div>
                 </div>
                 <div class="prev-right rv d2">
@@ -133,7 +135,7 @@
                             <img src="" alt="" class="pi in" id="previewImg" style="display:none" />
                             <div class="pph" id="imgPh">
                                 <div class="pph-box">?</div>
-                                <div class="pph-txt">เลือก Theme + Button + สี<br />เพื่อดูตัวอย่าง</div>
+                                <div class="pph-txt">เลือก ธีม + รูปแบบปุ่ม + สี Header<br />เพื่อดูตัวอย่าง</div>
                             </div>
                         </div>
                         <div class="prv-foot">
@@ -154,7 +156,7 @@
         <div class="content-inner">
             <div class="rv">
                 <div class="s-over">Details</div>
-                <div class="s-title">Product Details</div>
+                <div class="s-title">ข้อมูลสินค้าเพิ่มเติม</div>
             </div>
             <div class="det-grid">
                 <div class="det-card rv d1">
@@ -202,39 +204,40 @@
         <div class="content-inner">
             <div class="rv">
                 <div class="s-over">Pricing</div>
-                <div class="s-title">Price Table</div>
+                <div class="s-title">ราคาสินค้า</div>
             </div>
             <div class="ptbl rv d1">
-                <div class="ptbl-head">Products</div>
+                <div class="ptbl-head">สินค้า</div>
                 <div class="ptbl-row">
                     <div class="ptbl-left">
                         <div class="ptbl-ico">T</div>
                         <div>
                             <div class="ptbl-name">Theme</div>
-                            <div class="ptbl-desc">3 themes, change header color (supported theam)</div>
+                            <div class="ptbl-desc">มีทั้งหมด 3 ธีมโดยจะมีบางธีมที่สามารถเปลี่ยนสี header ได้</div>
                         </div>
                     </div>
-                    <div class="ptbl-price">70฿ / theme</div>
+                    <div class="ptbl-price">฿70 / ธีม</div>
                 </div>
                 <div class="ptbl-row">
                     <div class="ptbl-left">
                         <div class="ptbl-ico">B</div>
                         <div>
                             <div class="ptbl-name">Button Style</div>
-                            <div class="ptbl-desc">Multiple styles, free prefix change</div>
+                            <div class="ptbl-desc">มีรูปแบบปุ่มหลากหลายให้เลือก</div>
                         </div>
                     </div>
-                    <div class="ptbl-price">150฿ / style</div>
+                    <div class="ptbl-price">฿150 / รูปแบบปุ่ม</div>
                 </div>
                 <div class="ptbl-row">
                     <div class="ptbl-left">
                         <div class="ptbl-ico">!</div>
                         <div>
-                            <div class="ptbl-name">Code Conflict Fix</div>
-                            <div class="ptbl-desc">If another addon already customizes Form UI</div>
+                            <div class="ptbl-name">หมายเหตุ</div>
+                            <div class="ptbl-desc">หากต้องการให้แก้โค้ดชนกันจากแอดออนอื่นจะคิดค่าบริการเพิ่มเติม<br>
+                                โดยจะเพิ่มลดตามความยากง่าย</div>
                         </div>
                     </div>
-                    <div class="ptbl-price">30฿ up</div>
+                    <div class="ptbl-price">฿30 ขึ้นไป</div>
                 </div>
             </div>
         </div>
